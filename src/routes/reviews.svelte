@@ -5,11 +5,10 @@
     return resultados;
   };
   const promise = reviews();
-  export let title;
 </script>
 
 <main>
-  <h1>{title}</h1>
+  <h1>New York Times Movie Reviews</h1>
   {#await promise}
     <p>...waiting</p>
   {:then results}
