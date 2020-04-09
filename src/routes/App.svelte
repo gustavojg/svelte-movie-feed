@@ -1,5 +1,5 @@
 <script>
-  import { getReviews } from "./lib/nytData";
+  import { getReviews } from "../lib/nytData";
   const reviews = async () => {
     const resultados = await getReviews();
     return resultados;
