@@ -2,7 +2,7 @@ import apiKey from "../../apiKey";
 
 const getReviews = async () => {
   const result = await fetch(
-    `https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${apiKey}&critics-pick=Y&order=by-publication-date`
+    `https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${apiKey}&critics-pick=Y&order=by-publication-date&offset=3000`
   );
   const jsonResult = await result.json();
   if (jsonResult) {
