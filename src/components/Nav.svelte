@@ -1,60 +1,66 @@
 <script>
-	export let segment;
+  export let segment;
 </script>
 
 <style>
-	nav {
-		border-bottom: 1px solid rgba(255,62,0,0.1);
-		font-weight: 300;
-		padding: 0 1em;
-	}
 
-	ul {
-		margin: 0;
-		padding: 0;
-	}
-
-	/* clearfix */
-	ul::after {
-		content: '';
-		display: block;
-		clear: both;
-	}
-
-	li {
-		display: block;
-		float: left;
-	}
-
-	[aria-current] {
-		position: relative;
-		display: inline-block;
-	}
-
-	[aria-current]::after {
-		position: absolute;
-		content: '';
-		width: calc(100% - 1em);
-		height: 2px;
-		background-color: rgb(255,62,0);
-		display: block;
-		bottom: -1px;
-	}
-
-	a {
-		text-decoration: none;
-		padding: 1em 0.5em;
-		display: block;
-	}
 </style>
 
-<nav>
-	<ul>
-		<li><a aria-current='{segment === undefined ? "page" : undefined}' href='.'>home</a></li>
-		<li><a aria-current='{segment === "about" ? "page" : undefined}' href='about'>about</a></li>
-		<li><a aria-current='{segment === "reviews" ? "page" : undefined}' href='reviews'>reviews</a></li>
-		<!-- for the blog link, we're using rel=prefetch so that Sapper prefetches
-		     the blog data when we hover over the link or tap it on a touchscreen -->
-		<li><a rel=prefetch aria-current='{segment === "blog" ? "page" : undefined}' href='blog'>blog</a></li>
-	</ul>
+<nav id="navbar" class="bd-navbar navbar has-shadow is-spaced">
+  <div class="container">
+    <div class="navbar-brand">
+      <a
+        href="https://developer.nytimes.com"
+        style="display:flex;align-items:center"
+        target="_blank">
+        <img
+          src="https://developer.nytimes.com/files/poweredby_nytimes_30a.png?v=1568441069148"
+          alt="Using New York Times APS with sapper and svelt"
+          width="30"
+          height="30" />
+      </a>
+
+      <div
+        id="navbarBurger"
+        class="navbar-burger burger"
+        data-target="navMenuExpo">
+        <span />
+        <span />
+        <span />
+      </div>
+    </div>
+
+    <div id="navMenuExpo" class="navbar-menu">
+      <div class="navbar-start">
+        <a
+          aria-current={segment === 'reviews' ? 'page' : undefined}
+          href="reviews"
+          class="navbar-item bd-navbar-item-documentation ">
+          <span class="is-hidden-touch is-hidden-widescreen">Revs</span>
+          <span class="is-hidden-desktop-only">Reviews</span>
+        </a>
+        <a
+          class="navbar-item bd-navbar-item-videos "
+          aria-current={segment === 'about' ? 'page' : undefined}
+          href="about">
+          <span>About</span>
+        </a>
+      </div>
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="field is-grouped is-grouped-multiline">
+            <p class="control">
+              <a
+                target="_blank"
+                class="button is-primary"
+                style="height: 2.25em; padding: calc(.375em - 1px) .75em;"
+                href="https://github.com/gustavojg/svelte-movie-feed">
+                <strong>Download</strong>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </nav>

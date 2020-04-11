@@ -1,8 +1,11 @@
 <script context="module">
   import apiKey from "../../../apiKey";
-  export async function preload({ page, session, query }) {
+  import { getString } from "../../lib/urlFormat";
+  export async function preload({ path, query, params }) {
     const result = await this.fetch(
-      `https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${apiKey}&critics-pick=Y&order=by-publication-date`
+      `https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${apiKey}&query=${getString(
+        params.slug[1]
+      )}&reviewer=${getString(params.slug[0])}&order=by-publication-date`
     );
     const jsonResult = await result.json();
     if (jsonResult) {
@@ -18,7 +21,6 @@
   import { onMount } from "svelte";
   export let articleList;
   import { getReviews } from "../../lib/nytData";
-  import { getUrl } from "../../lib/urlFormat";
 
   const reviews = async () => {
     const resultados = await getReviews();
@@ -30,7 +32,7 @@
 </script>
 
 <svelte:head>
-  <title>Reviews</title>
+  <title>Review</title>
 </svelte:head>
 <div class="bd-main-container container">
   <header class="bd-header">
@@ -45,48 +47,40 @@
       <div class="container">
         <div class="card">
           <header class="card-header">
-            <p class="card-header-title">
-              <a href={`/reviews/${getUrl(review.byline)}/`}>{review.byline}</a>
-            </p>
+            <p class="card-header-title">{review.display_title}</p>
           </header>
           <div class="card-content">
-            <p class="title">
-              <a
-                href={`/reviews/${getUrl(review.byline)}/${getUrl(review.display_title)}`}>
-                {review.display_title}
-              </a>
-            </p>
+            <p class="title">{review.summary_short}</p>
+            <p class="subtitle">{review.byline}</p>
           </div>
           <footer class="card-footer">
             <p class="card-footer-item">
+              Opening:
+              <time datetime={review.opening_date}>{review.opening_date}</time>
+            </p>
+            <p class="card-footer-item">
+              Publication:
+              <time datetime={review.publication_date}>
+                {review.publication_date}
+              </time>
+            </p>
+            <p class="card-footer-item">
+              Updated:
+              <time datetime={review.date_updated}>{review.date_updated}</time>
+            </p>
+            <p class="card-footer-item">
               <span>
-                <a href={review.link.url}>{review.link.suggested_link_text}</a>
+                <a href={review.link.url} target="_blank">
+                  {review.link.suggested_link_text}
+                </a>
               </span>
             </p>
           </footer>
         </div>
       </div>
-      <hr style="margin: 0 0 3rem;">
+      <hr style="margin: 0 0 3rem;" />
     {/each}
   {:catch error}
     <p style="color: red">{error.message}</p>
   {/await}
 </div>
-
-<noscript>
-  {#await articleList then results}
-    <dl>
-      {#each results as review}
-        <dt>
-          <h4>{review.display_title}</h4>
-          {review.summary_short}
-          <br />
-          <a target="_blank" href={review.link.url}>
-            {review.link.suggested_link_text}
-          </a>
-          <hr />
-        </dt>
-      {/each}
-    </dl>
-  {/await}
-</noscript>
