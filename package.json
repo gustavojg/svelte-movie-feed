@@ -1,4 +1,5 @@
 {
+  "homepage": "https://gustavojg.github.io/svelte-sapper-examples/",
   "name": "NYTimesMoviesReviews",
   "description": "New York Times movie reviews feed",
   "version": "0.0.1",
@@ -9,7 +10,9 @@
     "start": "node __sapper__/build",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
-    "test": "run-p --race dev cy:run"
+    "test": "run-p --race dev cy:run",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "bulma": "^0.8.2",
