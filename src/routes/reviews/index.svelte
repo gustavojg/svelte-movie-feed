@@ -1,6 +1,7 @@
 <script context="module">
   import apiKey from "../../../apiKey";
   export async function preload({ page, session, query }) {
+    console.log("preload");
     const result = await this.fetch(
       `https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${apiKey}&critics-pick=Y&order=by-publication-date`
     );
@@ -15,17 +16,50 @@
 </script>
 
 <script>
-  import { onMount } from "svelte";
+  import { onMount, afterUpdate } from "svelte";
   export let articleList;
   import { getReviews } from "../../lib/nytData";
   import { getUrl } from "../../lib/urlFormat";
 
-  const reviews = async () => {
-    const resultados = await getReviews();
-    articleList = resultados;
-  };
+  const loadNewReviews = () => {};
+  afterUpdate(observer => {
+    console.log("update");
+  });
+
   onMount(() => {
-    //articleList = reviews();
+    let offset = 0;
+    const endElement = document.querySelector("#endPage");
+    const rootMargin = `0px 0px 300px 0px`;
+    if (typeof IntersectionObserver !== "undefined") {
+      const observer = new IntersectionObserver(
+        async e => {
+          console.log(e[0].isIntersecting);
+          if (e[0].isIntersecting === true) {
+            const resultados = await getReviews(offset);
+            articleList = articleList.concat(resultados);
+            offset += 20;
+          }
+        },
+        { rootMargin }
+      );
+      observer.observe(endElement);
+      return () => observer.unobserve(endElement);
+    }
+    const handler = () => {
+      const bcr = endElement.getBoundingClientRect();
+      intersecting =
+        bcr.bottom + bottom > 0 &&
+        bcr.right + right > 0 &&
+        bcr.top - top < window.innerHeight &&
+        bcr.left - left < window.innerWidth;
+
+      if (intersecting && once) {
+        window.removeEventListener("scroll", handler);
+      }
+    };
+
+    window.addEventListener("scroll", handler);
+    return () => window.removeEventListener("scroll", handler);
   });
 </script>
 
@@ -37,56 +71,102 @@
     <div class="bd-header-titles">
       <h1 class="title">New York Times Movie Reviews</h1>
     </div>
+    <ul class="steps">
+      <li class="steps-segment">
+        <a href="." class="steps-marker" >.</a>
+      </li>
+      <li class="steps-segment">
+        <a href="." class="steps-marker" >.</a>
+      </li>
+      <li class="steps-segment is-active">
+        <span class="steps-marker" />
+      </li>
+      <li class="steps-segment">
+        <span class="steps-marker" />
+      </li>
+      <li class="steps-segment">
+        <span class="steps-marker" />
+      </li>
+    </ul>
   </header>
-  {#await articleList}
-    <p>...waiting</p>
-  {:then results}
-    {#each results as review}
-      <div class="container">
-        <div class="card">
-          <header class="card-header">
-            <p class="card-header-title">
-              <a href={`/reviews/${getUrl(review.byline)}/`}>{review.byline}</a>
-            </p>
-          </header>
-          <div class="card-content">
-            <p class="title">
-              <a
-                href={`/reviews/${getUrl(review.byline)}/${getUrl(review.display_title)}`}>
-                {review.display_title}
-              </a>
-            </p>
-          </div>
-          <footer class="card-footer">
-            <p class="card-footer-item">
-              <span>
-                <a href={review.link.url}>{review.link.suggested_link_text}</a>
-              </span>
-            </p>
-          </footer>
-        </div>
-      </div>
-      <hr style="margin: 0 0 3rem;">
-    {/each}
-  {:catch error}
-    <p style="color: red">{error.message}</p>
-  {/await}
-</div>
-
-<noscript>
-  {#await articleList then results}
-    <dl>
+  <div id="reviewsList">
+    {#await articleList}
+      <p>...waiting</p>
+    {:then results}
       {#each results as review}
-        <dt>
-          <h4>{review.display_title}</h4>
-          {review.summary_short}
-          <br />
-          <a target="_blank" href={review.link.url}>
-            {review.link.suggested_link_text}
-          </a>
-          <hr />
-        </dt>
+        <div class="container">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                <a href={review.link.url} target="_blank">
+                  {review.display_title}
+                </a>
+              </p>
+            </header>
+            <div class="card-content">
+              <p class="title">{review.summary_short}</p>
+              <p class="subtitle">
+                <a href={`/reviews/${getUrl(review.byline)}/`}>
+                  {review.byline}
+                </a>
+              </p>
+            </div>
+            <footer class="card-footer">
+              <nav class="level card-footer-item">
+                <div class="level-item has-text-centered is-hidden-mobile">
+                  <div>
+                    <p class="heading">Opening</p>
+                    <p class="subtitle">
+                      <time datetime={review.opening_date}>
+                        {review.opening_date}
+                      </time>
+                    </p>
+                  </div>
+                </div>
+                <div class="level-item has-text-centered">
+                  <div>
+                    <p class="heading">Publication</p>
+                    <p class="subtitle">
+                      <time datetime={review.publication_date}>
+                        {review.publication_date}
+                      </time>
+                    </p>
+                  </div>
+                </div>
+                <div class="level-item has-text-centered">
+                  <div>
+                    <p class="heading">Updated</p>
+                    <p class="subtitle">
+                      <time datetime={review.date_updated}>
+                        {review.date_updated}
+                      </time>
+                    </p>
+                  </div>
+                </div>
+              </nav>
+              <p class="card-footer-item is-hidden-mobile">
+                <span>
+                  <a href={review.link.url} target="_blank">
+                    {review.link.suggested_link_text}
+                  </a>
+                </span>
+              </p>
+            </footer>
+            <footer class="card-footer is-hidden-desktop">
+              <a
+                href={review.link.url}
+                target="_blank"
+                class="button is-black is-medium is-fullwidth">
+                {`Read the complete Review`}
+              </a>
+            </footer>
+          </div>
+        </div>
+        <hr style="margin: 0 0 3rem;" />
       {/each}
-    </dl>
-  {/await}
-</noscript>
+    {:catch error}
+      <p style="color: red">{error.message}</p>
+    {/await}
+  </div>
+</div>
+<div id="endPage">end page</div>

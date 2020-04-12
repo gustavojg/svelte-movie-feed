@@ -1,9 +1,9 @@
 <script context="module">
   import apiKey from "../../../apiKey";
-  import { getString } from "../../lib/urlFormat";
+  import { getString, getUrl } from "../../lib/urlFormat";
   export async function preload({ path, query, params }) {
     const result = await this.fetch(
-      `https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${apiKey}&query=${getString(
+      `https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${apiKey}&critics-pick=Y&query=${getString(
         params.slug[1]
       )}&reviewer=${getString(params.slug[0])}&order=by-publication-date`
     );
@@ -47,34 +47,66 @@
       <div class="container">
         <div class="card">
           <header class="card-header">
-            <p class="card-header-title">{review.display_title}</p>
+            <p class="card-header-title">
+              <a href={review.link.url} target="_blank">
+                {review.display_title}
+              </a>
+            </p>
           </header>
           <div class="card-content">
             <p class="title">{review.summary_short}</p>
-            <p class="subtitle">{review.byline}</p>
+            <p class="subtitle">
+              <a href={`/reviews/${getUrl(review.byline)}/`}>{review.byline}</a>
+            </p>
           </div>
           <footer class="card-footer">
-            <p class="card-footer-item">
-              Opening:
-              <time datetime={review.opening_date}>{review.opening_date}</time>
-            </p>
-            <p class="card-footer-item">
-              Publication:
-              <time datetime={review.publication_date}>
-                {review.publication_date}
-              </time>
-            </p>
-            <p class="card-footer-item">
-              Updated:
-              <time datetime={review.date_updated}>{review.date_updated}</time>
-            </p>
-            <p class="card-footer-item">
+            <nav class="level card-footer-item">
+              <div class="level-item has-text-centered is-hidden-mobile">
+                <div>
+                  <p class="heading">Opening</p>
+                  <p class="subtitle">
+                    <time datetime={review.opening_date}>
+                      {review.opening_date}
+                    </time>
+                  </p>
+                </div>
+              </div>
+              <div class="level-item has-text-centered">
+                <div>
+                  <p class="heading">Publication</p>
+                  <p class="subtitle">
+                    <time datetime={review.publication_date}>
+                      {review.publication_date}
+                    </time>
+                  </p>
+                </div>
+              </div>
+              <div class="level-item has-text-centered">
+                <div>
+                  <p class="heading">Updated</p>
+                  <p class="subtitle">
+                    <time datetime={review.date_updated}>
+                      {review.date_updated}
+                    </time>
+                  </p>
+                </div>
+              </div>
+            </nav>
+            <p class="card-footer-item is-hidden-mobile">
               <span>
                 <a href={review.link.url} target="_blank">
                   {review.link.suggested_link_text}
                 </a>
               </span>
             </p>
+          </footer>
+          <footer class="card-footer is-hidden-desktop">
+            <a
+              href={review.link.url}
+              target="_blank"
+              class="button is-black is-medium is-fullwidth">
+              {`Read the complete Review`}
+            </a>
           </footer>
         </div>
       </div>
