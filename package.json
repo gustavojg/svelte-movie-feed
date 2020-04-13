@@ -6,13 +6,13 @@
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build --legacy",
-    "export": "sapper export --legacy",
+    "export": "sapper export --legacy --basepath svelte-sapper-examples",
     "start": "node __sapper__/build",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
     "test": "run-p --race dev cy:run",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "predeploy": "npm run export",
+    "deploy": "gh-pages -d __sapper__/export/svelte-sapper-examples"
   },
   "dependencies": {
     "bulma": "^0.8.2",

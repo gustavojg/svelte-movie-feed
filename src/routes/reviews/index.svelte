@@ -99,7 +99,7 @@
             <div class="card-content">
               <p class="title">{review.summary_short}</p>
               <p class="subtitle">
-                <a href={`/reviews/${getUrl(review.byline)}/`}>
+                <a href={`./reviews/${getUrl(review.byline)}/`}>
                   {review.byline}
                 </a>
               </p>
