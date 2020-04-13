@@ -1,7 +1,6 @@
 <script context="module">
   import apiKey from "../../../apiKey";
   export async function preload({ page, session, query }) {
-    console.log("preload");
     const result = await this.fetch(
       `https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${apiKey}&critics-pick=Y&order=by-publication-date`
     );
@@ -23,19 +22,18 @@
 
   const loadNewReviews = () => {};
   afterUpdate(observer => {
-    console.log("update");
+    //trigered after update page
   });
 
   onMount(() => {
-    let offset = 0;
+    let offset = 20;
     const endElement = document.querySelector("#endPage");
     const rootMargin = `0px 0px 300px 0px`;
     if (typeof IntersectionObserver !== "undefined") {
       const observer = new IntersectionObserver(
         async e => {
-          console.log(e[0].isIntersecting);
           if (e[0].isIntersecting === true) {
-            const resultados = await getReviews(offset);
+            const resultados = await getReviews({offset});
             articleList = articleList.concat(resultados);
             offset += 20;
           }
@@ -73,10 +71,10 @@
     </div>
     <ul class="steps">
       <li class="steps-segment">
-        <a href="." class="steps-marker" >.</a>
+        <a href="." class="steps-marker">.</a>
       </li>
       <li class="steps-segment">
-        <a href="." class="steps-marker" >.</a>
+        <a href="." class="steps-marker">.</a>
       </li>
       <li class="steps-segment is-active">
         <span class="steps-marker" />
@@ -169,4 +167,4 @@
     {/await}
   </div>
 </div>
-<div id="endPage">end page</div>
+<div id="endPage" />
