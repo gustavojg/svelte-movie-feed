@@ -4,7 +4,7 @@
 	"name": "TODO",
 	"short_name": "TODO",
 	"display": "minimal-ui",
-	"start_url": "/svelte-sapper-examples/",
+	"start_url": "/",
 	"icons": [
 		{
 			"src": "logo-192.png",
