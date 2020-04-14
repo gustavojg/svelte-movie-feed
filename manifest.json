@@ -1,10 +1,10 @@
 {
 	"background_color": "#ffffff",
 	"theme_color": "#333333",
-	"name": "TODO",
-	"short_name": "TODO",
+	"name": "New York Times APIS",
+	"short_name": "New York Times APIS",
 	"display": "minimal-ui",
-	"start_url": "/",
+	"start_url": "/svelte-sapper-examples/",
 	"icons": [
 		{
 			"src": "logo-192.png",
