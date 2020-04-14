@@ -1,1 +1,0 @@
-const s="iqc3CVv8sR3rYXGctAiap5CLJQ7z8dls",t=async t=>{const i=await fetch(`https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${s}&critics-pick=Y&order=by-publication-date&offset=${t}`),a=await i.json();if(a)return a.results;throw new Error(a)},i=s=>s.split(" ").join("-").toLowerCase(),a=s=>s.split("-").join(" ");export{s as a,i as b,a as c,t as g};
