@@ -1,11 +1,18 @@
 <script context="module">
-  import apiKey from "../../../apiKey";
+  import { onMount, afterUpdate } from "svelte";
+  import { stores } from "@sapper/app";
+  import { getReviews, createQueryString } from "../../lib/nytData";
   import { getString, getUrl } from "../../lib/urlFormat";
+
+  import apiKey from "../../../apiKey";
+
   export async function preload({ path, query, params }) {
+    const queryString = createQueryString({
+      query: getString(params.slug[1]),
+      reviewer: getString(params.slug[0])
+    });
     const result = await this.fetch(
-      `https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${apiKey}&critics-pick=Y&query=${getString(
-        params.slug[1]
-      )}&reviewer=${getString(params.slug[0])}&order=by-publication-date`
+      `https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${apiKey}&${queryString}`
     );
     const jsonResult = await result.json();
     if (jsonResult) {
@@ -18,16 +25,53 @@
 </script>
 
 <script>
-  import { onMount } from "svelte";
-  export let articleList;
-  import { getReviews } from "../../lib/nytData";
+  
+  const { page } = stores();
+  const { slug } = $page.params;
 
-  const reviews = async () => {
-    const resultados = await getReviews();
-    articleList = resultados;
+  export let articleList;
+  const queryString = {
+    query: getString(slug[1]),
+    reviewer: getString(slug[0])
   };
+  const loadNewReviews = () => {};
+  afterUpdate(observer => {
+    //trigered after update page
+  });
+
   onMount(() => {
-    //articleList = reviews();
+    let offset = 20;
+    const endElement = document.querySelector("#endPage");
+    const rootMargin = `0px 0px 300px 0px`;
+    if (typeof IntersectionObserver !== "undefined") {
+      const observer = new IntersectionObserver(
+        async e => {
+          if (e[0].isIntersecting === true) {
+            const resultados = await getReviews({ offset, ...queryString });
+            articleList = articleList.concat(resultados);
+            offset += 20;
+          }
+        },
+        { rootMargin }
+      );
+      observer.observe(endElement);
+      return () => observer.unobserve(endElement);
+    }
+    const handler = () => {
+      const bcr = endElement.getBoundingClientRect();
+      intersecting =
+        bcr.bottom + bottom > 0 &&
+        bcr.right + right > 0 &&
+        bcr.top - top < window.innerHeight &&
+        bcr.left - left < window.innerWidth;
+
+      if (intersecting && once) {
+        window.removeEventListener("scroll", handler);
+      }
+    };
+
+    window.addEventListener("scroll", handler);
+    return () => window.removeEventListener("scroll", handler);
   });
 </script>
 
@@ -116,3 +160,4 @@
     <p style="color: red">{error.message}</p>
   {/await}
 </div>
+<div id="endPage" />

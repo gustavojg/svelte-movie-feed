@@ -36,8 +36,8 @@
           aria-current={segment === 'reviews' ? 'page' : undefined}
           href="reviews"
           class="navbar-item bd-navbar-item-documentation ">
-          <span class="is-hidden-touch is-hidden-widescreen">Revs</span>
-          <span class="is-hidden-desktop-only">Reviews</span>
+          <span class="is-hidden-touch is-hidden-widescreen">Reviews</span>
+          <span class="is-hidden-desktop-only">Movie Reviews</span>
         </a>
         <a
           class="navbar-item bd-navbar-item-videos "
