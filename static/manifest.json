@@ -1,8 +1,8 @@
 {
 	"background_color": "#ffffff",
 	"theme_color": "#333333",
-	"name": "TODO",
-	"short_name": "TODO",
+	"name": "New York Times APIS",
+	"short_name": "New York Times APIS",
 	"display": "minimal-ui",
 	"start_url": "/",
 	"icons": [
