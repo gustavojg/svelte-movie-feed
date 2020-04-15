@@ -18,6 +18,7 @@ const createQueryString = (params) => {
   params.query && queryString.push(`query=${params.query}`);
   params.offset && queryString.push(`offset=${params.offset}`);
   params.reviewer && queryString.push(`reviewer=${params.reviewer}`);
+  params.year && queryString.push(`publication-date=${params.year}-01-01;${parseInt(params.year)+1}-01-01`);
   params["critics-pick"]
     ? queryString.push(`reviewer=${params["critics-pick"]}`)
     : queryString.push("critics-pick=Y");

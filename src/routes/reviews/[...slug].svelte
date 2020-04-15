@@ -7,10 +7,18 @@
   import apiKey from "../../../apiKey";
 
   export async function preload({ path, query, params }) {
-    const queryString = createQueryString({
-      query: getString(params.slug[1]),
-      reviewer: getString(params.slug[0])
-    });
+    let queryString;
+    switch (params.slug[0].toString()) {
+      case "year":
+        queryString = createQueryString({ year: params.slug[1] });
+        break;
+      default:
+        queryString = createQueryString({
+          query: getString(params.slug[1]),
+          reviewer: getString(params.slug[0])
+        });
+        break;
+    }
     const result = await this.fetch(
       `https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=${apiKey}&${queryString}`
     );
@@ -25,15 +33,22 @@
 </script>
 
 <script>
-  
   const { page } = stores();
   const { slug } = $page.params;
 
   export let articleList;
-  const queryString = {
-    query: getString(slug[1]),
-    reviewer: getString(slug[0])
-  };
+  let queryString;
+  switch (slug[0]) {
+    case "year":
+      queryString = { year: slug[1] };
+      break;
+    default:
+      queryString = {
+        query: getString(slug[1]),
+        reviewer: getString(slug[0])
+      };
+      break;
+  }
   const loadNewReviews = () => {};
   afterUpdate(observer => {
     //trigered after update page

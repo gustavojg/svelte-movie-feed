@@ -16,6 +16,7 @@
 
 <script>
   import { onMount, afterUpdate } from "svelte";
+  import Progress from "../../components/Progress.svelte";
   export let articleList;
   import { getReviews } from "../../lib/nytData";
   import { getUrl } from "../../lib/urlFormat";
@@ -24,7 +25,13 @@
   afterUpdate(observer => {
     //trigered after update page
   });
-
+  export const allYears = () => {
+    let years = [];
+    for (let i = 1920; i < 2021; i++) {
+      years.push(i.toString());
+    }
+    return years;
+  };
   onMount(() => {
     let offset = 20;
     const endElement = document.querySelector("#endPage");
@@ -33,7 +40,7 @@
       const observer = new IntersectionObserver(
         async e => {
           if (e[0].isIntersecting === true) {
-            const resultados = await getReviews({offset});
+            const resultados = await getReviews({ offset });
             articleList = articleList.concat(resultados);
             offset += 20;
           }
@@ -65,28 +72,16 @@
   <title>Reviews</title>
 </svelte:head>
 <div class="bd-main-container container">
-  <header class="bd-header">
+  <header class="bd-header is-flex">
     <div class="bd-header-titles">
-      <h1 class="title">New York Times Movie Reviews</h1>
+      <h1 class="title is-full">New York Times Movie Reviews</h1>
+      <div class="subtitle is-full">
+        <Progress yearList={allYears()} />
+      </div>
     </div>
-    <ul class="steps">
-      <li class="steps-segment">
-        <a href="." class="steps-marker">.</a>
-      </li>
-      <li class="steps-segment">
-        <a href="." class="steps-marker">.</a>
-      </li>
-      <li class="steps-segment is-active">
-        <span class="steps-marker" />
-      </li>
-      <li class="steps-segment">
-        <span class="steps-marker" />
-      </li>
-      <li class="steps-segment">
-        <span class="steps-marker" />
-      </li>
-    </ul>
+
   </header>
+
   <div id="reviewsList">
     {#await articleList}
       <p>...waiting</p>
